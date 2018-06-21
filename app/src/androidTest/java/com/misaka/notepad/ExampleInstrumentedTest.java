@@ -1,4 +1,4 @@
-package com.sunrin.notepad;
+package com.misaka.notepad;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

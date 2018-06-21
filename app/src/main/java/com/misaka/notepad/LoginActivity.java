@@ -1,4 +1,4 @@
-package com.sunrin.notepad;
+package com.misaka.notepad;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,14 +9,15 @@ import android.widget.Toast;
 
 public class LoginActivity extends AppCompatActivity {
 
+    PrefManager prefManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        PrefManager prefManager = new PrefManager(getApplicationContext());
+        prefManager = PrefManager.getInstance(getApplicationContext());
         if(prefManager.isFirstTimeLaunch())
         {
-            startActivityForResult(new Intent(this,SettingActivity.class),200);
+            startActivityForResult(new Intent(this,SettingActivity.class).putExtra("first",1),200);
         }
 
         findViewById(R.id.btnCheckPass).setOnClickListener(v -> {
@@ -41,6 +42,10 @@ public class LoginActivity extends AppCompatActivity {
         {
             Toast.makeText(this,"비밀번호를 설정해야 이용하실 수 있습니다",Toast.LENGTH_SHORT).show();
             startActivityForResult(new Intent(this,SettingActivity.class),200);
+        }
+        else
+        {
+            prefManager.setFirstTimeLaunch(true);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

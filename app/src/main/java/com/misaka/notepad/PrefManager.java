@@ -1,39 +1,34 @@
-package com.sunrin.notepad;
+package com.misaka.notepad;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class PrefManager {
     SharedPreferences pref;
-    SharedPreferences note_pref;
-
     SharedPreferences.Editor editor;
-    SharedPreferences.Editor note_editor;
     Context _context;
+    public static PrefManager instance = null;
 
-    // shared pref mode
-    int PRIVATE_MODE = 0;
+    public static PrefManager getInstance(Context context) {
+        return instance == null ? (instance = new PrefManager(context)) : instance;
+    }
 
     // Shared preferences file name
-    private static final String PREF_NAME = "NoteApp";
-
+    private static final String PREF_NAME = "pref";
     private static final String IS_FIRST_TIME_LAUNCH = "IsFirstTimeLaunch";
     private static final String PASSWORD = "Password";
-    private static final String NOTE_PREF = "notes";
 
 
     public PrefManager(Context context) {
         this._context = context;
-        pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
-        note_pref = context.getSharedPreferences(NOTE_PREF,PRIVATE_MODE);
+        pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         editor = pref.edit();
-        note_editor = note_pref.edit();
     }
 
     public void setFirstTimeLaunch(boolean isFirstTime) {
@@ -43,7 +38,7 @@ public class PrefManager {
 
     public void setPassword(String password)
     {
-        editor.putString(PASSWORD,password);
+        editor.putString(PASSWORD, password);
         editor.commit();
     }
 
@@ -57,7 +52,7 @@ public class PrefManager {
 
     public Note getNote(String Date)
     {
-        String temp = note_pref.getString(Date,"");
+        String temp = pref.getString(Date,"");
         if(temp.equals(""))
         {
             return null;
@@ -65,18 +60,21 @@ public class PrefManager {
         else
         {
             Gson gson = new Gson();
+            Log.d("MisakaMOE",temp);
             return gson.fromJson(temp,Note.class);
         }
     }
 
     public HashMap<String, Note> getAllNotes()
     {
-        Map<String, ?> temp = note_pref.getAll();
+        Map<String, ?> temp = pref.getAll();
+        temp.remove(IS_FIRST_TIME_LAUNCH);
+        temp.remove(PASSWORD);
         HashMap<String, Note> result = new HashMap<>();
-
 
         for(Map.Entry<String, ?> item : temp.entrySet())
         {
+            Log.d("MisakaMOE", item.getKey());
             String date = item.getKey();
             result.put(date, getNote(date));
         }
@@ -87,7 +85,8 @@ public class PrefManager {
     public void setNote(String date, Note note)
     {
         Gson gson = new Gson();
-        note_editor.putString(date, gson.toJson(note)).commit();
+        editor.putString(date, gson.toJson(note));
+        editor.commit();
     }
 
 }

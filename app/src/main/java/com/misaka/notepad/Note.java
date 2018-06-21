@@ -1,4 +1,4 @@
-package com.sunrin.notepad;
+package com.misaka.notepad;
 
 public class Note {
 

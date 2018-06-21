@@ -1,4 +1,4 @@
-package com.sunrin.notepad;
+package com.misaka.notepad;
 
 import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +14,7 @@ public class SettingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         EditText text = findViewById(R.id.editText);
-        PrefManager prefManager = new PrefManager(this);
+        PrefManager prefManager = PrefManager.getInstance(getApplicationContext());
 
         findViewById(R.id.btnSavePass).setOnClickListener(v ->
         {
@@ -26,6 +26,7 @@ public class SettingActivity extends AppCompatActivity {
             }
             else
             {
+                setResult(Activity.RESULT_CANCELED);
                 finish();
             }
         });
